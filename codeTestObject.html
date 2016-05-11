@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        form {
+            width: 800px;
+            margin: auto;
+            padding: 20px;
+            background: #efefef;
+            border: 1px solid grey;
+            position: relative;
+            overflow: hidden;
+        }
+
+        label, input {
+            float: left;
+        }
+
+        label {
+            width: 100%;
+        }
+
+        input[type=text] {
+            width: 50%;
+        }
+    </style>
+    <form>
+        <label for="contact_question">Code</label>
+        <textarea name="contact_question" id="contact_question"></textarea>
+        <input type="submit" value="Check Code">
+    </form>
+</head>
+<body>
+
+<script src="https://code.jquery.com/jquery-1.12.3.min.js"
+        integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var codeTester = function (sourceElement, codeLength, codePattern) {
+            this.input = sourceElement || $("#contact_question");
+            this.count = 0;
+            this.pattern = codePattern || ["A", "E", "I", "O", "U", "2", "4", "6", "8"];
+            this.codeLength = codeLength || 10;
+            this.remaining = function () {
+                return this.codeLength - (this.input).val().length;
+            };
+            this.counterDiv = function () {
+                return (this.input).prev();
+            };
+            this.updateCharText = function () {
+                (this.counterDiv()).html("Code: " + this.remaining() + " characters remaining.<span style='float: right;'>required</span>");
+            };
+            this.updateCharCount = function () {
+                this.count = (this.input).val().length;
+                this.updateCharText();
+            };
+            this.sliceEnd = function () {
+                if ((this.input).val().length > this.codeLength) {
+                    (this.input).val((this.input).val().slice(0, this.codeLength));
+                }
+                this.updateCharCount();
+            };
+            this.respond = function (message, slice) {
+                alert(message);
+                if (slice) {
+                    this.sliceEnd();
+                }
+            };
+            this.submitStatus = function(){
+                $('input[type=submit]').val(((this.remaining() == 0) ? "Check" : "Invalid") + " code.");
+            };
+            this.checkCode = function (e) {
+                if ((this.input).val().indexOf('#') != -1) {
+                    this.respond("The code does not include the # sign.");
+                    ((this.input).val((this.input).val().slice(0,-1)));
+                }
+                if ([16, 17, 18, 20, 144].indexOf(e.keyCode) == -1 && this.remaining() < 0) {
+                    this.respond("The code length is only " + (this.codeLength) + " digits long.", true);
+                }
+                if (this.remaining() >= 0) {
+                    this.updateCharCount();
+                }
+                this.sliceEnd();
+                this.submitStatus();
+
+            };
+            this.submitCode = function (e) {
+                if (this.count == this.codeLength) {
+                    ((this.pattern.indexOf($(this.input).val()[2]) != -1) &&
+                    (this.pattern.indexOf($(this.input).val()[5]) != -1))
+                            ? this.respond("Congratulations, you won!")
+                            : this.respond("I'm sorry, but that code did not win. Better luck next time.");
+                } else {
+                    e.preventDefault();
+                }
+            };
+            this.init = function () {
+                var ct = this;
+                var newInput = $("<input />", {
+                    name: (this.input).attr('name'),
+                    id: (this.input).attr('id'),
+                    class: (this.input).attr('class')
+                });
+                ((newInput).val((this.input).val())).insertAfter('textarea');
+                $('textarea').remove();
+                this.input = newInput;
+
+                (ct.input).on('keyup', function (event) {
+                    ct.checkCode(event);
+                });
+                (ct.input).on('paste', function (event) {
+                    setTimeout(function () {
+                        if ((ct.input).length > ct.codeLength) {
+                            (ct.input).val(ct.input.slice(0, ct.codeLength));
+                        }
+                        ct.checkCode(event);
+                    }, 100);
+                });
+                this.submitStatus();
+                $('input[type=submit]').on('click', function (event) {
+                    ct.submitCode(event);
+                });
+                this.updateCharText();
+            }
+        };
+        var CT = new codeTester();
+        CT.init();
+    });
+</script>
+
+
+</body>
+</html>

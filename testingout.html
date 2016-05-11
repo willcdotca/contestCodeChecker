@@ -1,0 +1,75 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        form {
+            width: 800px;
+            margin: auto;
+            padding: 20px;
+            background: #efefef;
+            border: 1px solid grey;
+        }
+
+        label, textarea {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<form>
+    <label for="contact_question">Code: 10 characters remaining.<span style="float: right;">required</span></label>
+    <textarea name="contact_question" id="contact_question"></textarea>
+    <input type="submit" value="Check Code">
+</form>
+
+
+<script src="https://code.jquery.com/jquery-1.12.3.min.js"
+        integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var input = $("#contact_question");
+        var pattern = ["A", "E", "I", "O", "U", "2", "4", "6", "8"];
+        var codeLength = 10;
+        $(input).prev().html("Code: " + codeLength + " characters remaining.<span style='float: right;'>required</span>");
+        $(input).on('keyup', function (event) {
+            var eq = codeLength - $(input).val().length;
+
+            if (event.keyCode == 6) {
+                eq = codeLength - $(input).val().length;
+            }
+
+            if ($(input).val().indexOf('#') != -1) {
+                alert("The code does not include the # sign.");
+                $(this).val($(this).val().slice(0, -1));
+            }
+
+            if ($(this).val().length > codeLength) {
+                alert("The code length is only " + (codeLength - 1) + " digits long.");
+                $(this).val($(this).val().slice(0, -1));
+            }
+
+            if (eq >= 0 && event.keyCode !== 35) {
+                $(this).prev().html("Code: " + eq + " characters remaining.<span style='float: right;'>required</span>");
+            }
+
+        });
+
+        $("input[type=submit]").on('click', function (e) {
+            if ($(input).val().length == codeLength) {
+                alert((
+                (pattern.indexOf($(input).val()[2]) != -1) &&
+                (pattern.indexOf($(input).val()[5]) != -1)) ?
+                        "Congratulations, you won!" :
+                        "I'm sorry, but that code did not win. Better luck next time.");
+            } else {
+                e.preventDefault();
+            }
+
+        });
+    });
+</script>
+
+
+</body>
+</html>
