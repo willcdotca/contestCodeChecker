@@ -26,13 +26,13 @@
             width: 50%;
         }
     </style>
-    <form>
-        <label for="contact_question">Code</label>
-        <textarea name="contact_question" id="contact_question"></textarea>
-        <input type="submit" value="Check Code">
-    </form>
 </head>
 <body>
+<form>
+    <label for="contact_question">Code</label>
+    <textarea name="contact_question" id="contact_question"></textarea>
+    <input type="submit" value="Check Code">
+</form>
 
 <script src="https://code.jquery.com/jquery-1.12.3.min.js"
         integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=" crossorigin="anonymous"></script>
@@ -42,7 +42,7 @@
         var codeTester = function (sourceElement, codeLength, codePattern) {
             this.input = sourceElement || $("#contact_question");
             this.count = 0;
-            this.pattern = codePattern || ["A", "E", "I", "O", "U", "2", "4", "6", "8"];
+            this.pattern = codePattern || ["A", "B", "C", "1", "2", "3"];
             this.codeLength = codeLength || 10;
             this.remaining = function () {
                 return this.codeLength - (this.input).val().length;
@@ -89,8 +89,8 @@
             };
             this.submitCode = function (e) {
                 if (this.count == this.codeLength) {
-                    ((this.pattern.indexOf($(this.input).val()[2]) != -1) &&
-                    (this.pattern.indexOf($(this.input).val()[5]) != -1))
+                    ((this.pattern.indexOf($(this.input).val()[1]) != -1) &&
+                    (this.pattern.indexOf($(this.input).val()[2]) != -1))
                             ? this.respond("Congratulations, you won!")
                             : this.respond("I'm sorry, but that code did not win. Better luck next time.");
                 } else {
